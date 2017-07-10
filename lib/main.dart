@@ -11,39 +11,111 @@ import 'package:flitcasting/model/accesstoken.dart';
 import 'package:built_value/serializer.dart';
 import 'serializers.dart';
 import 'constants.dart';
+import 'redux/app_store.dart';
 
-final PREF_TOKEN = "pref_access_token";
+const PREF_TOKEN = "pref_access_token";
+const APP_TITLE = 'Flitcasting';
 
-void main() {
-  runApp(new MyApp());
+AccessToken accessToken;
+
+Future main() async {
+  runApp(new SplashPage());
+
+
+  await _init();
+
+  final token = await _loadToken();
+
+  if (token.token_type.isNotEmpty) {
+    accessToken = token;
+    runApp(new App());
+  } else{
+    runApp(new MaterialApp(
+        home: new Scaffold(
+            body: new HomePage()),
+        theme: themeData)
+    );
+  }
 }
+
+class App extends StatefulWidget {
+  @override
+  _AppState createState() => new _AppState();
+}
+
+class _AppState extends State<App> {
+
+  var _subscription;
+
+  _AppState() {
+    _subscription = appStore.onChange.listen((_) async {
+      setState(() {});
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return new Container();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    _subscription.cancel();
+  }
+
+
+}
+
+
+Future _init() async {
+
+}
+
+final themeData = new ThemeData(
+  primarySwatch: Colors.blue,
+);
 
 class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return new MaterialApp(
-      title: 'Flitcasting',
-      theme: new ThemeData(
-        primarySwatch: Colors.blue,
-      ),
+      title: APP_TITLE,
+      theme: themeData,
       home: new HomePage(),
     );
   }
 }
 
-class HomePage extends StatelessWidget {
+class SplashPage extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return new MaterialApp(
+        home: new Scaffold(
+            body: new Column(children: [
+              new Center(
+                  child: new FlutterLogo(
+                      colors: Colors.pink,
+                      size: 80.0)),
+              new Center(
+                  child: new Text(
+                      APP_TITLE, style: new TextStyle(fontSize: 32.0))),
+              new Center(
+                  child:
+                  new Text("for Gitter", style: new TextStyle(fontSize: 16.0)))
+            ], mainAxisAlignment: MainAxisAlignment.center)),
+        theme: themeData);
+  }
+}
 
-  var _onCodeStream;
+
+class HomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final StreamController<String> _onCode = new StreamController();
-    final FlutterWebviewPlugin flutterWebviewPlugin = new FlutterWebviewPlugin();
-    String code;
     String url = 'https://apiv2.twitcasting.tv/oauth2/authorize?client_id=${CLIENT_ID}&response_type=code';
     final encodedUrl = Uri.encodeFull(url);
-    Stream<String> onCode = _onCode.stream.asBroadcastStream();
 
     return new Scaffold(
       appBar: new AppBar(
@@ -58,24 +130,6 @@ class HomePage extends StatelessWidget {
                 flutterWebviewPlugin.launch(encodedUrl);
 
                 _getToken().then((value) => flutterWebviewPlugin.close());
-//
-//                final accessToken = new AccessToken((b) => b
-//                  ..accessToken = 'access token'
-//                  ..tokenType = 'token type'
-//                  ..expiresIn = 123123);
-
-//                var serialized = serializers.serialize(accessToken);
-
-//                print('this is serialized ${JSON.encode(serialized)}');
-
-//                var json = "{ \"token_type\": \"test\"}";
-//
-//                var ttt = serializers.deserializeWith(AccessToken.serializer, JSON.decode(json));
-//
-//                var ttt2  = serializers.serializeWith(AccessToken.serializer, ttt);
-//                print('yo $ttt');
-//                print('yo2 $ttt2');
-
               },
               child: const Text('click'),
             ),
@@ -92,68 +146,82 @@ class HomePage extends StatelessWidget {
     );
   }
 
-  Future<Stream<String>> _startServer() async {
-    final StreamController<String> onCode = new StreamController();
 
-    HttpServer server = await HttpServer.bind(
-        InternetAddress.LOOPBACK_IP_V4, 8080);
-    server.listen((HttpRequest request) async {
-      final String code = request.uri.queryParameters["code"];
-      request.response
-        ..statusCode = 200
-        ..headers.set("Content-type", ContentType.HTML.mimeType)
-        ..write("<html><h1>You can now close this window</h1></html>");
-      await request.response.close();
-      await server.close(force: true);
-      onCode.add(code);
-      await onCode.close();
-    });
-
-    return onCode.stream;
-  }
-
-  Future _getToken() async {
-    Stream<String> onCode = await _startServer();
-    final String code = await onCode.first;
-    print('token should be: ${code}');
-    _postToken(code);
-//    _saveToken(code);
-  }
-
-  Future _saveToken(String code) async {
-    final prefs = await SharedPreferences.getInstance();
-    prefs.setString('pref_token', code);
-  }
-
-  Future _loadToken() async {
-    final prefs = await SharedPreferences.getInstance();
-    final tokenJson = prefs.getString(PREF_TOKEN);
-    if (tokenJson != null) {
-//     serializers.deserialize(tokenJson, )
-//      final token = new AccessToken.fromJson(tokenJson);
-//      print('token from prefs is ${token.toString()}');
-    }
-  }
-
-  Future _postToken(String code) async {
-    final httpClient = createHttpClient();
-
-    final response = await httpClient.post(
-        'https://apiv2.twitcasting.tv/oauth2/access_token',
-        body: {
-          'code': code,
-          'grant_type': 'authorization_code',
-          'client_id': CLIENT_ID,
-          'client_secret': CLIENT_SECRET,
-          'redirect_uri': 'http://localhost:8080'
-        });
-    print('response ${response}');
-    final accessToken = serializers.deserializeWith(
-        AccessToken.serializer, JSON.decode(response.body));
-    print(accessToken);
-    final prefs = await SharedPreferences.getInstance();
-
-    prefs.setString(PREF_TOKEN, accessToken.toString());
-  }
 }
 
+Future _postToken(String code) async {
+  final httpClient = createHttpClient();
+
+  final response = await httpClient.post(
+      'https://apiv2.twitcasting.tv/oauth2/access_token',
+      body: {
+        'code': code,
+        'grant_type': 'authorization_code',
+        'client_id': CLIENT_ID,
+        'client_secret': CLIENT_SECRET,
+        'redirect_uri': 'http://localhost:8080'
+      });
+  print('response ${response}');
+  final accessToken = serializers.deserializeWith(
+      AccessToken.serializer, JSON.decode(response.body));
+  print(accessToken);
+  final prefs = await SharedPreferences.getInstance();
+
+  prefs.setString(PREF_TOKEN, response.body);
+}
+
+Future<Stream<String>> _startServer() async {
+  final StreamController<String> onCode = new StreamController();
+
+  HttpServer server = await HttpServer.bind(
+      InternetAddress.LOOPBACK_IP_V4, 8080);
+  server.listen((HttpRequest request) async {
+    final String code = request.uri.queryParameters["code"];
+    request.response
+      ..statusCode = 200
+      ..headers.set("Content-type", ContentType.HTML.mimeType)
+      ..write("<html><h1>You can now close this window</h1></html>");
+    await request.response.close();
+    await server.close(force: true);
+    onCode.add(code);
+    await onCode.close();
+  });
+
+  return onCode.stream;
+}
+
+Future _getToken() async {
+  Stream<String> onCode = await _startServer();
+  final String code = await onCode.first;
+  print('token should be: ${code}');
+  _postToken(code);
+//  _saveToken(code);
+}
+
+Future _saveToken(String code) async {
+  final prefs = await SharedPreferences.getInstance();
+  prefs.setString('pref_token', code);
+}
+
+Future <AccessToken> _loadToken() async {
+  final prefs = await SharedPreferences.getInstance();
+  final tokenJson = prefs.getString(PREF_TOKEN);
+  if (tokenJson != null) {
+    final token = serializers.deserializeWith(
+        AccessToken.serializer, JSON.decode(tokenJson));
+
+//    final AccessToken token = serializers.serialize(tokenJson, specifiedType: const FullType(AccessToken));
+
+    print(token);
+    return new Future(() => token);
+  } else {
+    return new Future(
+            () =>
+        new AccessToken((b) =>
+        b
+          ..access_token = ''
+          ..token_type = ''
+          ..expires_in = 0)
+    );
+  }
+}
