@@ -9,9 +9,10 @@ import 'dart:convert';
 import 'package:flutter/services.dart';
 import 'package:flitcasting/model/accesstoken.dart';
 import 'package:built_value/serializer.dart';
-import 'serializers.dart';
-import 'constants.dart';
-import 'redux/app_store.dart';
+import 'package:flitcasting/serializers.dart';
+import 'package:flitcasting/constants.dart';
+import 'package:redux/redux.dart';
+import 'package:flitcasting/redux/app_store.dart';
 
 const PREF_TOKEN = "pref_access_token";
 const APP_TITLE = 'Flitcasting';
@@ -29,7 +30,7 @@ Future main() async {
   if (token.token_type.isNotEmpty) {
     accessToken = token;
     runApp(new App());
-  } else{
+  } else {
     runApp(new MaterialApp(
         home: new Scaffold(
             body: new HomePage()),
@@ -48,9 +49,9 @@ class _AppState extends State<App> {
   var _subscription;
 
   _AppState() {
-    _subscription = appStore.onChange.listen((_) async {
-      setState(() {});
-    });
+//    _subscription = appStore.onChange.listen((_) async {
+//      setState(() {});
+//    });
   }
 
   @override
@@ -61,7 +62,7 @@ class _AppState extends State<App> {
   @override
   void dispose() {
     super.dispose();
-    _subscription.cancel();
+//    _subscription.cancel();
   }
 
 

@@ -39,15 +39,15 @@ class _HomeViewState extends State<HomeView> {
   @override
   void initState() {
     super.initState();
-    _subscription = appStore.onChange.listen((_) {
-      setState(() {});
-    });
+//    _subscription = appStore.onChange.listen((_) {
+//      setState(() {});
+//    });
   }
 
   @override
   void dispose() {
     super.dispose();
-    _subscription.cancel();
+//    _subscription.cancel();
   }
 
 
