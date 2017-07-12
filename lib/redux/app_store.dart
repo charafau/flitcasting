@@ -8,3 +8,5 @@ class AppStore extends Store<AppState, String> {
       : super(reducer ?? new AppReducer(),
       initialState: initialState ?? new AppState());
 }
+
+AppStore appStore;

@@ -16,7 +16,7 @@ class HomeView extends StatefulWidget {
   static void go(BuildContext context, {bool replace: true}) {
 //    fetchMovies();
     materialNavigateTo(context, new HomeView(),
-    path: HomeView.path, replace: replace);
+        path: HomeView.path, replace: replace);
   }
 
 
@@ -28,10 +28,19 @@ class _HomeViewState extends State<HomeView> {
 
   @override
   Widget build(BuildContext context) {
-
     return new Scaffold(
+      appBar: new AppBar(
+        title: new Text("Movies"),
+      ),
       body: new Center(
-        child: new Text('jhello'),
+        child: new ListView.builder(
+          padding: new EdgeInsets.all(8.0),
+          itemCount: appStore.state.movies.length,
+          itemExtent: 20.0,
+          itemBuilder: (BuildContext context, int index){
+            return new Text(appStore.state.movies[index].name);
+          },
+        ),
       ),
     );
   }
@@ -39,16 +48,14 @@ class _HomeViewState extends State<HomeView> {
   @override
   void initState() {
     super.initState();
-//    _subscription = appStore.onChange.listen((_) {
-//      setState(() {});
-//    });
+    _subscription = appStore.onChange.listen((_) {
+      setState(() {});
+    });
   }
 
   @override
   void dispose() {
     super.dispose();
-//    _subscription.cancel();
+    _subscription.cancel();
   }
-
-
 }

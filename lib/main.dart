@@ -22,7 +22,6 @@ const APP_TITLE = 'Flitcasting';
 AccessToken accessToken;
 
 
-
 Future main() async {
   runApp(new SplashPage());
 
@@ -58,9 +57,9 @@ class _AppState extends State<App> {
   var _subscription;
 
   _AppState() {
-//    _subscription = appStore.onChange.listen((_) async {
-//      setState(() {});
-//    });
+    _subscription = appStore.onChange.listen((_) async {
+      setState(() {});
+    });
   }
 
   @override
@@ -71,7 +70,7 @@ class _AppState extends State<App> {
   @override
   void dispose() {
     super.dispose();
-//    _subscription.cancel();
+    _subscription.cancel();
   }
 
 
@@ -79,8 +78,7 @@ class _AppState extends State<App> {
 
 
 Future _init() async {
-//  AppStore appStore = new AppStore();
-AppStore appStore = new AppStore(new AppReducer());
+  appStore = new AppStore(new AppReducer());
 }
 
 final themeData = new ThemeData(
