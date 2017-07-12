@@ -13,15 +13,18 @@ import 'package:flitcasting/serializers.dart';
 import 'package:flitcasting/constants.dart';
 import 'package:redux/redux.dart';
 import 'package:flitcasting/redux/app_store.dart';
+import 'package:flitcasting/redux/app_reducer.dart';
+import 'package:flitcasting/routes/home.dart';
 
 const PREF_TOKEN = "pref_access_token";
 const APP_TITLE = 'Flitcasting';
 
 AccessToken accessToken;
 
+
+
 Future main() async {
   runApp(new SplashPage());
-
 
   await _init();
 
@@ -29,7 +32,13 @@ Future main() async {
 
   if (token.token_type.isNotEmpty) {
     accessToken = token;
-    runApp(new App());
+    runApp(new MaterialApp(
+      theme: themeData,
+      title: APP_TITLE,
+      routes: {
+        HomeView.path: (BuildContext context) => new HomeView(),
+      },
+    ));
   } else {
     runApp(new MaterialApp(
         home: new Scaffold(
@@ -70,7 +79,8 @@ class _AppState extends State<App> {
 
 
 Future _init() async {
-
+//  AppStore appStore = new AppStore();
+AppStore appStore = new AppStore(new AppReducer());
 }
 
 final themeData = new ThemeData(

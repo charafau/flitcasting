@@ -6,6 +6,6 @@ class AppReducer extends Reducer<AppState, String> {
   @override
   AppState reduce(AppState state, String action) {
 
-    return null;
+    return state;
   }
 }
