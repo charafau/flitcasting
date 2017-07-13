@@ -2,6 +2,7 @@ library flitcasting.routes.home;
 
 import 'dart:async';
 
+import 'package:flitcasting/widgets/list_movie.dart';
 import 'package:flutter/material.dart';
 import 'package:flitcasting/common/utils.dart';
 import 'package:flitcasting/redux/app_store.dart';
@@ -9,6 +10,10 @@ import 'package:flitcasting/redux/app_store.dart';
 class HomeView extends StatefulWidget {
 
   static final String path = "/";
+  final RefreshCallback onRefresh;
+
+  HomeView({this.onRefresh});
+
 
   @override
   _HomeViewState createState() => new _HomeViewState();
@@ -32,15 +37,14 @@ class _HomeViewState extends State<HomeView> {
       appBar: new AppBar(
         title: new Text("Movies"),
       ),
-      body: new Center(
-        child: new ListView.builder(
-          padding: new EdgeInsets.all(8.0),
-          itemCount: appStore.state.movies.length,
-          itemExtent: 20.0,
-          itemBuilder: (BuildContext context, int index){
-            return new Text(appStore.state.movies[index].name);
-          },
-        ),
+      body: new ListMovie(
+        movies: appStore.state.movies,
+        onRefresh: () {
+          if (widget.onRefresh != null) {
+            return widget.onRefresh();
+          }
+//          return fetchMovies();
+        },
       ),
     );
   }
