@@ -35,7 +35,7 @@ Future main() async {
       theme: themeData,
       title: APP_TITLE,
       routes: {
-        HomeView.path: (BuildContext context) => new HomeView(),
+        HomeView.path: (BuildContext context) => new HomeView(accessToken: token),
       },
     ));
   } else {

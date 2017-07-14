@@ -7,5 +7,13 @@ part of serializers;
 // Target: library serializers
 // **************************************************************************
 
-Serializers _$serializers =
-    (new Serializers().toBuilder()..add(AccessToken.serializer)).build();
+Serializers _$serializers = (new Serializers().toBuilder()
+      ..add(AccessToken.serializer)
+      ..add(Broadcaster.serializer)
+      ..add(Movie.serializer)
+      ..add(MovieResponse.serializer)
+      ..add(MovieResponseList.serializer)
+      ..addBuilderFactory(
+          const FullType(BuiltList, const [const FullType(MovieResponse)]),
+          () => new ListBuilder<MovieResponse>()))
+    .build();

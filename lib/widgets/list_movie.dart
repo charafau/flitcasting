@@ -2,6 +2,7 @@ import 'package:flitcasting/model/movie.dart';
 import 'package:flutter/material.dart';
 import 'package:flitcasting/redux/app_store.dart';
 import 'package:meta/meta.dart';
+import 'package:flitcasting/services/movie_service.dart';
 
 class ListMovie extends StatelessWidget {
 
@@ -16,6 +17,9 @@ class ListMovie extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+
+//    fetchMovies(accessToken);
+
     return new RefreshIndicator(
         child: new ListView.builder(
             itemCount: movies.length,
