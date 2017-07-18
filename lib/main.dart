@@ -131,7 +131,8 @@ class HomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    String url = 'https://apiv2.twitcasting.tv/oauth2/authorize?client_id=${CLIENT_ID}&response_type=code';
+    String url = 'http://apiv2.twitcasting.tv/oauth2/authorize?client_id=${CLIENT_ID}&response_type=code';
+//    String url = 'https://google.com';
     final encodedUrl = Uri.encodeFull(url);
 
     return new Scaffold(
@@ -176,7 +177,7 @@ Future _postToken(String code) async {
         'grant_type': 'authorization_code',
         'client_id': CLIENT_ID,
         'client_secret': CLIENT_SECRET,
-        'redirect_uri': 'http://localhost:8080'
+        'redirect_uri': 'https://localhost:8080'
       });
   print('response ${response}');
   final accessToken = serializers.deserializeWith(
