@@ -18,6 +18,7 @@ Future main(List<String> args) async {
           new GeneratorBuilder([new BuiltValueGenerator()]),
           new InputSet('flitcasting', const [
             'lib/model/*.dart',
+            'lib/state/*.dart',
             'lib/*.dart',
           ])),
       deleteFilesByDefault: true);

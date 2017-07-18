@@ -14,19 +14,21 @@ class HomeView extends StatefulWidget {
   static final String path = "/";
   final RefreshCallback onRefresh;
   final AccessToken accessToken;
+  final MovieService movieService;
 
-  HomeView({this.onRefresh, this.accessToken});
+  HomeView({this.onRefresh, this.accessToken, this.movieService});
 
+  static void go(BuildContext context, AccessToken accessToken,
+      {bool replace: true}) {
+    final movieService = new MovieService(accessToken);
 
-  @override
-  _HomeViewState createState() => new _HomeViewState();
-
-  static void go(BuildContext context, {bool replace: true}) {
-//    fetchMovies();
-    materialNavigateTo(context, new HomeView(),
+    materialNavigateTo(context,
+        new HomeView(movieService: movieService, accessToken: accessToken),
         path: HomeView.path, replace: replace);
   }
 
+  @override
+  _HomeViewState createState() => new _HomeViewState();
 
 }
 
@@ -36,20 +38,27 @@ class _HomeViewState extends State<HomeView> {
 
   @override
   Widget build(BuildContext context) {
-    final movieSerivce = new MovieService(widget.accessToken);
-    movieSerivce.fetchMovies();
+    var body;
 
-    return new Scaffold(
-      appBar: new AppBar(
-        title: new Text("Movies"),
-      ),
-      body: new ListMovie(
+    if (appStore.state.movies != null) {
+      body = new ListMovie(
         movies: appStore.state.movies,
         onRefresh: () {
           if (widget.onRefresh != null) {
             return widget.onRefresh();
           }
+          return widget.movieService.fetchMovies();
         },
+      );
+    } else {
+      body = new LoadingView();
+    }
+
+
+    return new Scaffold(
+      body: body,
+      appBar: new AppBar(
+        title: new Text("Movies"),
       ),
     );
   }
@@ -67,4 +76,11 @@ class _HomeViewState extends State<HomeView> {
     super.dispose();
     _subscription.cancel();
   }
+}
+
+
+class LoadingView extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) =>
+      new Center(child: new CircularProgressIndicator());
 }

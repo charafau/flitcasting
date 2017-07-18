@@ -7,6 +7,7 @@ import 'dart:core';
 import 'dart:async';
 import 'dart:convert';
 import 'package:flutter/services.dart';
+import 'package:flitcasting/services/movie_service.dart';
 import 'package:flitcasting/model/accesstoken.dart';
 import 'package:built_value/serializer.dart';
 import 'package:flitcasting/serializers.dart';
@@ -31,13 +32,20 @@ Future main() async {
 
   if (token.token_type.isNotEmpty) {
     accessToken = token;
+    final ms = new MovieService(accessToken);
     runApp(new MaterialApp(
       theme: themeData,
       title: APP_TITLE,
       routes: {
-        HomeView.path: (BuildContext context) => new HomeView(accessToken: token),
+        HomeView.path: (BuildContext context) {
+          return new HomeView(accessToken: token,
+            movieService: ms);
+        },
       },
     ));
+
+    ms.fetchMovies();
+
   } else {
     runApp(new MaterialApp(
         home: new Scaffold(
