@@ -14,6 +14,7 @@ abstract class Broadcaster implements Built<Broadcaster, BroadcasterBuilder> {
   String get image;
   String get profile;
   int get level;
+  @nullable
   String get last_movie_id;
   bool get is_live;
   num get created;

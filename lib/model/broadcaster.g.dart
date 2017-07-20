@@ -34,15 +34,18 @@ class _$BroadcasterSerializer implements StructuredSerializer<Broadcaster> {
           specifiedType: const FullType(String)),
       'level',
       serializers.serialize(object.level, specifiedType: const FullType(int)),
-      'last_movie_id',
-      serializers.serialize(object.last_movie_id,
-          specifiedType: const FullType(String)),
       'is_live',
       serializers.serialize(object.is_live,
           specifiedType: const FullType(bool)),
       'created',
       serializers.serialize(object.created, specifiedType: const FullType(num)),
     ];
+    if (object.last_movie_id != null) {
+      result
+        ..add('last_movie_id')
+        ..add(serializers.serialize(object.last_movie_id,
+            specifiedType: const FullType(String)));
+    }
 
     return result;
   }
@@ -147,7 +150,6 @@ class _$Broadcaster extends Broadcaster {
     if (image == null) throw new ArgumentError.notNull('image');
     if (profile == null) throw new ArgumentError.notNull('profile');
     if (level == null) throw new ArgumentError.notNull('level');
-    if (last_movie_id == null) throw new ArgumentError.notNull('last_movie_id');
     if (is_live == null) throw new ArgumentError.notNull('is_live');
     if (created == null) throw new ArgumentError.notNull('created');
   }

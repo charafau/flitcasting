@@ -1,5 +1,5 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.yourcompany.flitcasting">
+          package="com.yourcompany.flitcasting">
 
     <!-- The INTERNET permission is required for development. Specifically,
          flutter needs it to communicate with the running application
@@ -12,13 +12,17 @@
          In most cases you can leave this as-is, but you if you want to provide
          additional functionality it is fine to subclass or reimplement
          FlutterApplication and put your custom class here. -->
-    <application android:name="io.flutter.app.FlutterApplication" android:label="flitcasting" android:icon="@mipmap/ic_launcher">
-        <activity android:name=".MainActivity"
-                  android:launchMode="singleTop"
-                  android:theme="@android:style/Theme.Black.NoTitleBar"
-                  android:configChanges="orientation|keyboardHidden|keyboard|screenSize|locale|layoutDirection"
-                  android:hardwareAccelerated="true"
-                  android:windowSoftInputMode="adjustResize">
+    <application
+        android:name="io.flutter.app.FlutterApplication"
+        android:label="flitcasting"
+        android:icon="@mipmap/ic_launcher">
+        <activity
+            android:name=".MainActivity"
+            android:launchMode="singleTop"
+            android:theme="@android:style/Theme.Black.NoTitleBar"
+            android:configChanges="orientation|keyboardHidden|keyboard|screenSize|locale|layoutDirection"
+            android:hardwareAccelerated="true"
+            android:windowSoftInputMode="adjustResize">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER"/>
@@ -26,8 +30,15 @@
         </activity>
 
 
-        <activity android:name="com.flutter_webview_plugin.WebviewActivity"
-                  android:parentActivityName=".MainActivity"/>
+        <activity
+            android:name="com.flutter_webview_plugin.WebviewActivity"
+            android:parentActivityName=".MainActivity"/>
+
+        <activity
+            android:name=".VideoActivity"
+            android:parentActivityName=".MainActivity"
+            android:theme="@style/Theme.AppCompat.NoActionBar"
+            android:configChanges="orientation|keyboardHidden|keyboard|screenSize|locale|layoutDirection"/>
 
     </application>
 </manifest>
